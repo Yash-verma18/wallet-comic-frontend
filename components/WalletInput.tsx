@@ -13,7 +13,7 @@ export default function WalletInput({ onSubmit }: Props) {
   const handleSubmit = () => {
     if (!input) return;
     onSubmit(input.trim());
-    setInput('');
+    // setInput('');
   };
 
   return (
@@ -23,7 +23,7 @@ export default function WalletInput({ onSubmit }: Props) {
         placeholder='Enter wallet address or ENS'
         value={input}
         onChange={(e) => setInput(e.target.value)}
-        className='border border-gray-400 px-4 py-2 w-full rounded-md focus:outline-none'
+        className='border border-gray-400 px-4 py-2 w-full rounded-md focus:outline-none bg-white'
       />
       <button
         onClick={handleSubmit}

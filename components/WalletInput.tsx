@@ -5,11 +5,11 @@ import { useState } from 'react';
 
 type Props = {
   onSubmit: (address: string) => void;
+  input: string;
+  setInput: (input: string) => void;
 };
 
-export default function WalletInput({ onSubmit }: Props) {
-  const [input, setInput] = useState('');
-
+export default function WalletInput({ onSubmit, input, setInput }: Props) {
   const handleSubmit = () => {
     if (!input) return;
     onSubmit(input.trim());

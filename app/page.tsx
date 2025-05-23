@@ -10,6 +10,7 @@ import {
   ComicCardContractCall,
 } from '@/components/TransactionCards';
 import ComicTextAnimation from '@/components/ComicTextAnimation';
+import SuggestedWalletTags from '@/components/SuggestedWalletTags';
 
 type TxItem = {
   label: string;
@@ -32,11 +33,12 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [walletAddress, setWalletAddress] = useState('');
-
+  const [input, setInput] = useState('');
   const [page, setPage] = useState(1);
 
   const handleAddressSubmit = async (address: string) => {
     setLoading(true);
+    setInput(address);
     setTimeline([]);
     setPage(1);
     setHasMore(true);
@@ -90,9 +92,16 @@ export default function Home() {
   return (
     <main className='min-h-screen p-8 '>
       <ComicTextAnimation />
-      <WalletInput onSubmit={handleAddressSubmit} />
+      <WalletInput
+        onSubmit={handleAddressSubmit}
+        input={input}
+        setInput={setInput}
+      />
+      <SuggestedWalletTags onSelect={handleAddressSubmit} />
 
-      {loading && <p className='text-center mt-8'>Loading timeline...</p>}
+      {loading && (
+        <p className='text-center mt-8 text-emerald-50'>Loading timeline...</p>
+      )}
       <div className='mt-10'>
         {timeline.map((tx, index) => {
           if (tx.type === 'ETH_TRANSFER') {
@@ -166,9 +175,15 @@ export default function Home() {
       </div>
 
       {page != 1 && loading && (
-        <p className='text-center text-sm mt-4'>Loading more...</p>
+        <p className='text-center text-sm mt-4 text-emerald-50'>
+          Loading more...
+        </p>
       )}
-      {!hasMore && <p className='text-center text-sm mt-4'>No more data 👀</p>}
+      {!hasMore && (
+        <p className='text-center text-sm mt-4 text-emerald-50'>
+          No more data 👀
+        </p>
+      )}
     </main>
   );
 }

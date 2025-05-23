@@ -91,7 +91,6 @@ export default function Home() {
     <main className='min-h-screen p-8 '>
       <ComicTextAnimation />
       <WalletInput onSubmit={handleAddressSubmit} />
-      {/* <WowComic /> */}
 
       {loading && <p className='text-center mt-8'>Loading timeline...</p>}
       <div className='mt-10'>
@@ -166,7 +165,9 @@ export default function Home() {
         })}{' '}
       </div>
 
-      {loading && <p className='text-center text-sm mt-4'>Loading more...</p>}
+      {page != 1 && loading && (
+        <p className='text-center text-sm mt-4'>Loading more...</p>
+      )}
       {!hasMore && <p className='text-center text-sm mt-4'>No more data 👀</p>}
     </main>
   );

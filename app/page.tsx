@@ -2,6 +2,7 @@
 
 import WalletInput from '@/components/WalletInput';
 import { useEffect, useState } from 'react';
+import { API_BASE_URL } from '@/lib/config';
 import axios from 'axios';
 import {
   ComicCard,
@@ -67,7 +68,7 @@ export default function Home() {
     setLoading(true);
     try {
       const res = await axios.get(
-        `http://localhost:8000/api/wallet/${address}?page=${newPage}&limit=10`
+        `${API_BASE_URL}/api/wallet/${address}?page=${page}&limit=${10}`
       );
 
       const newItems = res.data.timeline;

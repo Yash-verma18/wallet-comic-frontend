@@ -40,17 +40,18 @@ export default function ComicCardNFTTransfer({
       initial={{ x: index % 2 === 0 ? -100 : 100, opacity: 0 }}
       animate={isInView ? { x: 0, opacity: 1 } : {}}
       transition={{
-        duration: 0.6,
-        delay: index * 0.05,
         type: 'spring',
-        stiffness: 120,
+        stiffness: 300,
+        damping: 20, // controls "recoil bounce" – lower = snappier
+        duration: 0.15,
+        delay: index * 0.03, // faster stagger too
       }}
       whileTap={{ rotate: [-2, 2, -1, 1, 0] }}
       className='relative bg-yellow-100 border-4 border-black rounded-xl shadow-xl overflow-hidden font-comic max-w-2xl mx-auto mb-6'
     >
       {/* 🎨 Comic-style background */}
       <Image
-        src='/comic-nft.jpg' // Save the AI background image to public
+        src='/comic-nft.jpg'
         alt='Comic NFT Background'
         fill
         className='object-cover z-0 opacity-90'

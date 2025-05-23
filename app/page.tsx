@@ -1,16 +1,15 @@
 'use client';
-import { motion } from 'framer-motion';
+
 import WalletInput from '@/components/WalletInput';
-import TimelineCard from '@/components/TimelineCard';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
-import ComicCard from '@/components/ComicCard';
-import ComicCardContractCall from '@/components/ComicCardContractCall';
+import {
+  ComicCard,
+  ComicCardNFTTransfer,
+  ComicCardERC20Transfer,
+  ComicCardContractCall,
+} from '@/components/TransactionCards';
 import ComicTextAnimation from '@/components/ComicTextAnimation';
-import WowComic from '@/components/WowComic';
-import ComicCardNFTTransfer from '@/components/ComicCardNFTTransfer';
-import ComicCardERC20Transfer from '@/components/ComicCardERC20Transfer';
-import { comicData } from '@/constants/data';
 
 type TxItem = {
   label: string;
@@ -29,26 +28,64 @@ type TxItem = {
 };
 
 export default function Home() {
-  const [timeline, setTimeline] = useState<TxItem[]>(comicData);
+  const [timeline, setTimeline] = useState<TxItem[]>([]);
   const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [walletAddress, setWalletAddress] = useState('');
 
   const [page, setPage] = useState(1);
-  const limit = 10;
 
   const handleAddressSubmit = async (address: string) => {
     setLoading(true);
+    setTimeline([]);
+    setPage(1);
+    setHasMore(true);
+    setWalletAddress(address);
+
+    await fetchPage(1, address);
+  };
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrolledToBottom =
+        window.innerHeight + window.scrollY >= document.body.offsetHeight - 100;
+
+      if (scrolledToBottom && hasMore && !loading) {
+        fetchPage(page + 1, walletAddress);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [page, walletAddress, hasMore, loading]);
+
+  const fetchPage = async (newPage: number, address: string) => {
+    if (loading || !hasMore) return;
+
+    setLoading(true);
     try {
       const res = await axios.get(
-        `http://localhost:8000/api/wallet/${address}?page=${page}&limit=${limit}`
+        `http://localhost:8000/api/wallet/${address}?page=${newPage}&limit=10`
       );
 
-      setTimeline(res.data.timeline);
+      const newItems = res.data.timeline;
+
+      if (newItems.length === 0) {
+        setHasMore(false);
+      } else {
+        setTimeline((prev) => [...prev, ...newItems]);
+        setPage(newPage);
+      }
     } catch (err) {
-      console.error('Error:', err);
+      console.error('Pagination error:', err);
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    console.log('timeline length', timeline.length);
+  }, [timeline]);
 
   return (
     <main className='min-h-screen p-8 '>
@@ -128,6 +165,9 @@ export default function Home() {
           return null; // fallback for unknown types
         })}{' '}
       </div>
+
+      {loading && <p className='text-center text-sm mt-4'>Loading more...</p>}
+      {!hasMore && <p className='text-center text-sm mt-4'>No more data 👀</p>}
     </main>
   );
 }

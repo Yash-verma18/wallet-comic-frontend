@@ -1,7 +1,9 @@
 // components/TimelineCard.tsx
 'use client';
-import { motion } from 'framer-motion';
+
+import { motion, useInView } from 'framer-motion';
 import Image from 'next/image';
+import { useRef } from 'react';
 type Props = {
   label: string;
   date: string;
@@ -9,6 +11,7 @@ type Props = {
   txHash: string;
   from: string;
   to: string;
+  index: number;
 };
 export default function ComicCard({
   label,
@@ -17,12 +20,23 @@ export default function ComicCard({
   txHash,
   from,
   to,
+  index,
 }: Props) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: '0px 0px -100px 0px' });
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className='relative bg-yellow-200 border-4 border-black rounded-xl shadow-xl overflow-hidden font-comic max-w-2xl mx-auto mb-6'
+      ref={ref}
+      initial={{ x: index % 2 === 0 ? -100 : 100, opacity: 0 }}
+      animate={isInView ? { x: 0, opacity: 1 } : {}}
+      transition={{
+        duration: 0.6,
+        delay: index * 0.05,
+        type: 'spring',
+        stiffness: 120,
+      }}
+      whileTap={{ rotate: [-2, 2, -1, 1, 0] }}
+      className='relative bg-yellow-100 border-4 border-black rounded-xl shadow-xl overflow-hidden font-comic max-w-2xl mx-auto mb-6'
     >
       <Image
         src='/comic-bg.jpg'

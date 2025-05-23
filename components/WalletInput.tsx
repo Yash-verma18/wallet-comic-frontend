@@ -20,7 +20,7 @@ export default function WalletInput({ onSubmit }: Props) {
     <div className='flex items-center gap-4 w-full max-w-xl mx-auto mt-10'>
       <input
         type='text'
-        placeholder='Enter wallet address or ENS'
+        placeholder='Enter wallet address'
         value={input}
         onChange={(e) => setInput(e.target.value)}
         className='border border-gray-400 px-4 py-2 w-full rounded-md focus:outline-none bg-white'

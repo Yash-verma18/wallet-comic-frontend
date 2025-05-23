@@ -1,7 +1,8 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import Image from 'next/image';
+import { useRef } from 'react';
 
 type Props = {
   label: string;
@@ -10,6 +11,7 @@ type Props = {
   from: string;
   to: string;
   gasUsed: string;
+  index: number;
 };
 
 export default function ComicCardContractCall({
@@ -19,22 +21,32 @@ export default function ComicCardContractCall({
   from,
   to,
   gasUsed,
+  index,
 }: Props) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: '0px 0px -100px 0px' });
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+      ref={ref}
+      initial={{ x: index % 2 === 0 ? -100 : 100, opacity: 0 }}
+      animate={isInView ? { x: 0, opacity: 1 } : {}}
+      transition={{
+        duration: 0.6,
+        delay: index * 0.05,
+        type: 'spring',
+        stiffness: 120,
+      }}
+      whileTap={{ rotate: [-2, 2, -1, 1, 0] }}
       className='relative bg-yellow-200 border-4 border-black rounded-xl shadow-xl overflow-hidden font-comic max-w-2xl mx-auto mb-6'
     >
-      {/* Comic burst background */}
       <Image
-        src='/comic-contract.jpg' // Place the uploaded comic image in /public
+        src='/comic-contract.jpg'
         alt='Contract Interaction Background'
         fill
         className='object-cover'
         priority
       />
-
       <div className='relative z-10 p-6 text-center space-y-2'>
         <p className='text-sm text-gray-700 uppercase tracking-wide'>
           {new Date(date).toDateString()}

@@ -10,6 +10,7 @@ import ComicTextAnimation from '@/components/ComicTextAnimation';
 import WowComic from '@/components/WowComic';
 import ComicCardNFTTransfer from '@/components/ComicCardNFTTransfer';
 import ComicCardERC20Transfer from '@/components/ComicCardERC20Transfer';
+import { comicData } from '@/constants/data';
 
 type TxItem = {
   label: string;
@@ -18,17 +19,17 @@ type TxItem = {
   txHash: string;
   from: string;
   to: string;
-  value: string;
-  gasUsed: string;
-  tokenId: string;
-  tokenName: string;
-  tokenSymbol: string;
-  contractAddress: string;
-  image: string;
+  value?: string;
+  gasUsed?: string;
+  tokenId?: string;
+  tokenName?: string;
+  tokenSymbol?: string;
+  contractAddress?: string;
+  image?: string;
 };
 
 export default function Home() {
-  const [timeline, setTimeline] = useState<TxItem[]>([]);
+  const [timeline, setTimeline] = useState<TxItem[]>(comicData);
   const [loading, setLoading] = useState(false);
 
   const [page, setPage] = useState(1);
@@ -40,6 +41,7 @@ export default function Home() {
       const res = await axios.get(
         `http://localhost:8000/api/wallet/${address}?page=${page}&limit=${limit}`
       );
+
       setTimeline(res.data.timeline);
     } catch (err) {
       console.error('Error:', err);
@@ -61,9 +63,10 @@ export default function Home() {
             return (
               <ComicCard
                 key={index}
+                index={index}
                 label={tx.label}
                 date={tx.date}
-                value={tx.value}
+                value={tx.value || ''}
                 txHash={tx.txHash}
                 from={tx.from}
                 to={tx.to}
@@ -75,12 +78,13 @@ export default function Home() {
             return (
               <ComicCardContractCall
                 key={index}
+                index={index}
                 label={tx.label}
                 date={tx.date}
                 txHash={tx.txHash}
                 from={tx.from}
                 to={tx.to}
-                gasUsed={tx.gasUsed}
+                gasUsed={tx.gasUsed || ''}
               />
             );
           }
@@ -89,16 +93,17 @@ export default function Home() {
             return (
               <ComicCardNFTTransfer
                 key={index}
+                index={index}
                 label={tx.label}
                 date={tx.date}
                 from={tx.from}
                 to={tx.to}
                 txHash={tx.txHash}
-                tokenId={tx.tokenId}
-                tokenName={tx.tokenName}
-                tokenSymbol={tx.tokenSymbol}
-                contractAddress={tx.contractAddress}
-                imageUrl={tx.image}
+                tokenId={tx.tokenId || ''}
+                tokenName={tx.tokenName || ''}
+                tokenSymbol={tx.tokenSymbol || ''}
+                contractAddress={tx.contractAddress || ''}
+                imageUrl={tx.image || ''}
               />
             );
           }
@@ -107,20 +112,21 @@ export default function Home() {
             return (
               <ComicCardERC20Transfer
                 key={index}
+                index={index}
                 label={tx.label}
                 date={tx.date}
                 from={tx.from}
                 to={tx.to}
                 txHash={tx.txHash}
-                value={tx.value}
-                tokenSymbol={tx.tokenSymbol}
-                tokenName={tx.tokenName}
+                value={tx.value || ''}
+                tokenSymbol={tx.tokenSymbol || ''}
+                tokenName={tx.tokenName || ''}
               />
             );
           }
 
           return null; // fallback for unknown types
-        })}
+        })}{' '}
       </div>
     </main>
   );
